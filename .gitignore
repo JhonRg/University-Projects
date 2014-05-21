@@ -1,21 +1,100 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+#include <iostream>
+#include <stdlib.h>
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+using namespace std;
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+int Menu();
+void setTerreno(int *solucion,int &filas, int &columnas);
+void VigilanciaBasica(int *solucion, int columnas, int filas, int etapa);
+void VigilanciaAvanzada();
+bool Validacion(int *solucion, int etapa, int candidato);
+void TratarSolucion(int *solucion, int columnas);
 
-# Executables
-*.exe
-*.out
-*.app
+int main()
+{
+    int opcion=0;
+    int *solucion, filas=0, columnas=0;
+    int etapa=0;
+        solucion = new int [0];
+        if(solucion == NULL){
+            cout << "Error al reservar memoria";
+        }
+    do{
+        opcion=Menu();
+        switch(opcion){
+        case 1: setTerreno(solucion, filas, columnas);
+                break;
+        case 2: VigilanciaBasica(solucion, columnas, filas, etapa);
+                break;
+        case 3: VigilanciaAvanzada();
+        }
+    }while(opcion != 4);
+    cout << "Fin del programa." << endl;
+    return 0;
+}
+
+int Menu(){
+int opcion;
+cout << "Menu :" << endl;
+cout << "1.- Dimensiones Terreno" << endl
+    << "2.- Vigilancia Basica" << endl
+    << "3.- Vigilancia Avanzada" << endl
+    << "4.- Salir" << endl;
+cin >> opcion;
+return opcion;
+}
+void setTerreno(int *solucion, int &filas, int &columnas){
+    cout << "--- Dimensiones Terreno ---"<< endl;
+    cout << "Numero de filas: ";
+    cin >> filas;
+    cout << "Numero de columnas: ";
+    cin >> columnas;
+    cout << endl;
+
+    solucion= new int [columnas];
+    if(solucion==NULL){
+        cout << "Error al reservar memoria.";
+    }
+}
+void VigilanciaBasica(int *solucion, int columnas, int filas, int etapa){
+    int candidato=-1;
+cout << "Etapa: " << etapa <<endl;
+    do{
+        candidato++;
+        cout << "Candidato " << candidato;
+        if(Validacion(solucion, etapa, candidato)){
+                cout << " valido" << endl;
+            if(etapa<=columnas-1){
+                cout << "No se ha completado la solucion, llamamos a la siguiente etapa"<<endl;
+                solucion[etapa]=candidato;
+                etapa++;
+                VigilanciaBasica(solucion, columnas, filas, etapa);
+            }else{
+                cout << "Solución completada: ";
+                TratarSolucion(solucion, columnas);
+            }
+        }
+    }while(candidato<filas-1);
+}
+void VigilanciaAvanzada(){
+    cout << "Modulo no disponible" << endl;
+}
+bool Validacion(int *solucion,int etapa, int candidato){
+    bool valido=true;
+    for(int i=0; i<etapa; i++){
+        if(solucion[i]==candidato || abs(solucion[i]-candidato)==abs(i-etapa)){
+            valido=false;
+        }
+    }
+    return valido;
+}
+void TratarSolucion(int *solucion,int  columnas){
+    cout << "[";
+    for(int i=0; i<columnas; i++){
+        if(i<columnas-1){
+        cout << solucion[i] << " ,";
+        }else{
+        cout << solucion[i] << "]";
+        }
+    }
+}
